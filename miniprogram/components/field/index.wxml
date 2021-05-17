@@ -1,0 +1,4 @@
+<view class="form-field">
+    <view class="form-field">{{label}}</view>
+    <view capture-bind:formitemchange='onChange'><slot></slot></view>
+</view>

@@ -1,0 +1,7 @@
+<!-- components/form/index.wxml -->
+<form bindsubmit="handleSubmit">
+    <slot></slot>
+    <view capture-bind:submit="submit">
+        <slot name="submit"/>
+    </view>
+</form>

@@ -1,3 +1,8 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "bx-form": "../../components/form/index",
+    "bx-field": "../../components/field/index",
+    "bx-input": "../../components/input/index",
+    "bx-button": "../../components/button/index"
+  }
 }
