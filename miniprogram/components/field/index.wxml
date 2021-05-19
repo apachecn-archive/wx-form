@@ -1,4 +1,7 @@
 <view class="form-field">
     <view class="form-field">{{label}}</view>
-    <view capture-bind:formitemchange='onChange'><slot></slot></view>
+    <view capture-bind:formitemchange='onChange'>
+        <slot></slot>
+    </view>
+    <view wx:for="{{error}}" wx:key="field" style="color:red">{{item.message}}</view>
 </view>

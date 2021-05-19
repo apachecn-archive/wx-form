@@ -1,5 +1,3 @@
-import FormStore from './form-store'
-
 Component({
   relations: {
     '../field/index': {
@@ -30,15 +28,14 @@ Component({
 
   lifetimes: {
     attached() {
-      if (!wx.formStore) {
-        wx.formStore = {}
+      const { name } = this.properties
+
+      if (!wx.bxform) {
+        wx.bxform = {}
       }
-
-      // if (wx.formStore[this.data.name]) {
-      //   throw new Error('已存在同名的form')
-      // }
-
-      wx.formStore[this.data.name] = new FormStore()
+      if (typeof name === 'string' && name.length > 0) {
+        wx.bxform[name] = this._getForm(this)
+      }
     }
   },
 
@@ -46,9 +43,43 @@ Component({
    * 组件的方法列表
    */
   methods: {
-    handleSubmit(e){
-      console.log(e);
-      this.triggerEvent('bxsubmit', e, {
+    _getForm: (context) => {
+      return {
+        getFieldsValue: context._getFieldsValue.bind(context),
+        getFieldsError: context._getFieldsError.bind(context)
+      }
+    },
+    
+    _getFieldsValue: function () {
+      const items = this.getRelationNodes('../field/index');
+      const values = items.reduce((acc, item) => {
+        return Object.assign(acc, item.getData())
+      }, {});
+      return values
+    },
+
+    _getFieldsError: function () {
+      const items = this.getRelationNodes('../field/index');
+      const values = items.reduce((acc, item) => {
+        const err = item.getError()
+        if (err) {
+          return acc.concat(err)
+        }
+        return acc
+      }, []);
+      return values
+    },
+
+    _validateFields: function () {
+      const items = this.getRelationNodes('../field/index');
+      
+    },
+    
+    handleSubmit: function (e) {
+      this.triggerEvent('bxsubmit', {
+        errors: this._getFieldsError(),
+        values: this._getFieldsValue()
+      }, {
         bubbles: true,
         composed: true,
         capturePhase: true

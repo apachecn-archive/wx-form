@@ -1,14 +1,13 @@
-// components/field/index.js
+import Schema from '../common/async-validator/index';
 Component({
-  behaviors: ['wx://form-field'],
   relations: {
     '../form/index': {
       type: 'parent',
-      linked: function() {
+      linked: function () {
       },
-      linkChanged: function() {
+      linkChanged: function () {
       },
-      unlinked: function() {
+      unlinked: function () {
       }
     }
   },
@@ -22,18 +21,28 @@ Component({
     name: {
       type: String
     },
+    rules: {
+      type: Array
+    }
   },
 
   /**
    * 组件的初始数据
    */
   data: {
-    value: ''
+    value: '',
+    isValidate: false,
+    error: null
   },
 
   lifetimes: {
     attached() {
-
+      const { name, rules } = this.properties
+      console.log(name, rules);
+      const descriptor = {
+        [name]: rules
+      }
+      this.validator = new Schema(descriptor)
     }
   },
 
@@ -41,7 +50,38 @@ Component({
    * 组件的方法列表
    */
   methods: {
+    getData: function () {
+      const { name } = this.properties
+      const { value } = this.data
+      return {
+        [name]: value
+      }
+    },
+    getError: function () {
+      const { error } = this.data
+      return error
+    },
+    getName: function () {
+
+    },
+    getValue: function () {
+
+    },
+    validate: function (data) {
+      const values = data || this.getData()
+      this.validator.validate(values, (error) => {
+        console.log(error);
+        this.setData({
+          error
+        })
+      })
+    },
     onChange: function (e) {
+      const { name } = this.properties
+
+      this.validate({
+        [name]: e.detail
+      })
       this.setData({
         value: e.detail,
       })
